@@ -7,7 +7,7 @@ const products = [
     brand: 'Apple',
     category: 'Electronics',
     price: 89.99,
-    countInStock: 0,
+    countInStock: 15,
     rating: 4.5,
     numReviews: 12,
   },
@@ -67,10 +67,10 @@ const products = [
     brand: 'Amazon',
     category: 'Electronics',
     price: 29.99,
-    countInStock: 0,
+    countInStock: 3,
     rating: 4,
     numReviews: 12,
   },
-]
+];
 
-export default products
+export default products;

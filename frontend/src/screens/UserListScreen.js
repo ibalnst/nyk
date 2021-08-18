@@ -4,13 +4,16 @@ import { Table, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
-import { getUserList } from '../actions/userActions';
+import { getUserList, deleteUserDetails } from '../actions/userActions';
 
 const UserListScreen = ({ history }) => {
   const dispatch = useDispatch();
 
   const userList = useSelector((state) => state.userList);
   const { users, loading, error } = userList;
+
+  const userDelete = useSelector((state) => state.userDelete);
+  const { success: successDelete, loading: loadingDelete } = userDelete;
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
@@ -21,10 +24,12 @@ const UserListScreen = ({ history }) => {
     } else {
       history.push('/login');
     }
-  }, [dispatch, history, userInfo]);
+  }, [dispatch, history, userInfo, successDelete, loadingDelete]);
 
   const deleteHandler = (id) => {
-    console.log('deleted');
+    if (window.confirm('Are You Sure?')) {
+      dispatch(deleteUserDetails(id));
+    }
   };
 
   return (
@@ -61,7 +66,7 @@ const UserListScreen = ({ history }) => {
                   )}
                 </td>
                 <td>
-                  <LinkContainer to={`/user/${user._id}/edit`}>
+                  <LinkContainer to={`/admin/user/${user._id}/edit`}>
                     <Button variant='light' className='btn-sm'>
                       <i className='fas fa-edit'></i>
                     </Button>
