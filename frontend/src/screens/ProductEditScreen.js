@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import FormContainer from '../components/FormContainer';
@@ -21,6 +22,7 @@ const ProductEditScreen = ({ match, history }) => {
   const [category, setCategory] = useState('');
   const [countInStock, setCountInStock] = useState('');
   const [description, setDescription] = useState('');
+  const [upload, setUpload] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -39,7 +41,7 @@ const ProductEditScreen = ({ match, history }) => {
       dispatch({ type: PRODUCT_UPDATE_RESET });
       history.push('/admin/productlist');
     } else {
-      if (!product || product._id !== productId) {
+      if (!product.name || product._id !== productId) {
         dispatch(listProductsDetails(productId));
       } else {
         setName(product.name);
@@ -47,19 +49,11 @@ const ProductEditScreen = ({ match, history }) => {
         setImage(product.image);
         setBrand(product.brand);
         setCategory(product.category);
-        setCountInStock(product.setCountInStock);
+        setCountInStock(product.countInStock);
         setDescription(product.description);
       }
     }
-  }, [
-    dispatch,
-    product,
-    productId,
-    history,
-    successUpdate,
-    loadingUpdate,
-    loading,
-  ]);
+  }, [dispatch, product, productId, history, successUpdate, loadingUpdate]);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -75,6 +69,26 @@ const ProductEditScreen = ({ match, history }) => {
         countInStock,
       })
     );
+  };
+
+  const uploadFileHandler = async (e) => {
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append('image', file);
+    setUpload(true);
+    try {
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      };
+      const { data } = await axios.post('/api/upload', formData, config);
+      setImage(data);
+      setUpload(false);
+    } catch (error) {
+      console.log(error);
+      setUpload(false);
+    }
   };
 
   return (
@@ -117,7 +131,7 @@ const ProductEditScreen = ({ match, history }) => {
               <Form.Control
                 type='text'
                 label='brand'
-                checked={brand}
+                value={brand}
                 onChange={(e) => setBrand(e.target.value)}
               ></Form.Control>
             </Form.Group>
@@ -127,7 +141,7 @@ const ProductEditScreen = ({ match, history }) => {
               <Form.Control
                 type='text'
                 label='category'
-                checked={category}
+                value={category}
                 onChange={(e) => setCategory(e.target.value)}
               ></Form.Control>
             </Form.Group>
@@ -137,9 +151,16 @@ const ProductEditScreen = ({ match, history }) => {
               <Form.Control
                 type='text'
                 label='image'
-                checked={image}
+                value={image}
                 onChange={(e) => setImage(e.target.value)}
               ></Form.Control>
+              <Form.File
+                id='image-file'
+                label='Choose File'
+                custom
+                onChange={uploadFileHandler}
+              ></Form.File>
+              {upload && <Loader />}
             </Form.Group>
 
             <Form.Group controlId='countInStock'>
@@ -147,7 +168,7 @@ const ProductEditScreen = ({ match, history }) => {
               <Form.Control
                 type='number'
                 label='countInStock'
-                checked={countInStock}
+                value={countInStock}
                 onChange={(e) => setCountInStock(e.target.value)}
               ></Form.Control>
             </Form.Group>
@@ -157,7 +178,7 @@ const ProductEditScreen = ({ match, history }) => {
               <Form.Control
                 type='text'
                 label='description'
-                checked={description}
+                value={description}
                 onChange={(e) => setDescription(e.target.value)}
               ></Form.Control>
             </Form.Group>
