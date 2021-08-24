@@ -14,6 +14,9 @@ import {
   ORDER_USER_REQUEST,
   ORDER_USER_SUCCSESS,
   ORDER_USER_FAIL,
+  ORDER_DELIVERED_REQUEST,
+  ORDER_DELIVERED_SUCCSESS,
+  ORDER_DELIVERED_FAIL,
 } from '../constants/orderConstants';
 import axios from 'axios';
 
@@ -58,6 +61,7 @@ export const getOrderDetails = (id) => async (dispatch, getState) => {
 
     const config = {
       headers: {
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
@@ -70,6 +74,40 @@ export const getOrderDetails = (id) => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: ORDER_DETAILS_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const getDeliveredDetails = (order) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: ORDER_DELIVERED_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.put(
+      `/api/orders/${order._id}/delivered`,
+      {},
+      config
+    );
+    dispatch({
+      type: ORDER_DELIVERED_SUCCSESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: ORDER_DELIVERED_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message
@@ -155,6 +193,7 @@ export const userOrderDetails = () => async (dispatch, getState) => {
 
     const config = {
       headers: {
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
