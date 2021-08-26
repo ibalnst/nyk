@@ -47,6 +47,9 @@ const OrderScreen = ({ match, history }) => {
   //     order.orderItems.reduce((acc, item) => acc + item.price * item.qty, 0)
   //   );
   // }
+  if (!loading) {
+    order.itemsShippingPrice = order.itemsPrice > 100 ? 0 : 100;
+  }
 
   useEffect(() => {
     if (!userInfo) {

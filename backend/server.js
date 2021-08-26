@@ -8,10 +8,13 @@ import productRouter from './routes/productRouter.js';
 import userRouter from './routes/userRoutes.js';
 import orderRouter from './routes/orderRoutes.js';
 import uploadRouter from './routes/uploadRoutes.js';
+import morgan from 'morgan';
 
 const app = express();
 dotenv.config();
-
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
 connectDB();
 app.use(express.json());
 
