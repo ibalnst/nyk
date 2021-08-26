@@ -18,6 +18,7 @@ import Rating from '../components/Rating';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import { PRODUCT_UPDATE_REVIEW_RESET } from '../constants/productConstants';
+import Helmet from 'react-helmet';
 
 const ProductScreen = ({ history, match }) => {
   const [qty, setQty] = useState(1);
@@ -61,6 +62,9 @@ const ProductScreen = ({ history, match }) => {
 
   return (
     <>
+      <Helmet>
+        <title>{product.name}</title>
+      </Helmet>
       <Link className='btn btn-light my-3 ' to='/'>
         Go Back
       </Link>
